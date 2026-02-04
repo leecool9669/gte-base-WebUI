@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""GTE-base 句子相侼度 WebUI 演示（不加载真实模型权重）。"""
+"""GTE-base 句子相似度 WebUI 演示（不加载真实模型权重）。"""
 from __future__ import annotations
 
 import gradio as gr
@@ -11,7 +11,7 @@ def fake_load_model():
 
 
 def fake_similarity(source: str, sentences: str) -> str:
-    """模拟源句子与候选句子的相侼度并返回可视化描述。"""
+    """模拟源句子与候选句子的相似度并返回可视化描述。"""
     if not (source or "").strip():
         return "请输入源句子。"
     lines_raw = [s.strip() for s in (sentences or "").strip().split("\n") if s.strip()]
@@ -19,25 +19,25 @@ def fake_similarity(source: str, sentences: str) -> str:
         return "请输入至少一句候选句子，每行一句。"
     k = min(len(lines_raw), 10)
     lines = [
-        "[演示] 已对句子相侼度进行计算（未加载真实模型）。",
-        f"源句子：{source[:80]}{''...'' if len(source) > 80 else ''}",
+        "[演示] 已对句子相似度进行计算（未加载真实模型）。",
+        f"源句子：{source[:80]}{'...' if len(source) > 80 else ''}",
         "",
-        f"与 {k} 句候选的相侼度示例（占位）：",
+        f"与 {k} 句候选的相似度示例（占位）：",
     ]
     for i in range(k):
         lines.append(
-            f"  {i+1}. {lines_raw[i][:50]}{''...'' if len(lines_raw[i]) > 50 else ''} -> 相侼度: 0.{9 - i % 10}xx"
+            f"  {i+1}. {lines_raw[i][:50]}{'...' if len(lines_raw[i]) > 50 else ''} -> 相似度: 0.{9 - i % 10}xx"
         )
-    lines.append("\n加载真实 GTE-base 后，将在此显示实际余弦相侼度。")
+    lines.append("\n加载真实 GTE-base 后，将在此显示实际余弦相似度。")
     return "\n".join(lines)
 
 
 def build_ui():
     with gr.Blocks(title="GTE-base Sentence Similarity WebUI") as demo:
-        gr.Markdown("## GTE-base 通用文本嵌入 · 句子相侼度 WebUI 演示")
+        gr.Markdown("## GTE-base 通用文本嵌入 · 句子相似度 WebUI 演示")
         gr.Markdown(
-            "本界面以交互方式展示 GTE-base 句子编码模型的典型使用流程（"
-            "包括模型加载状态与句子相侼度结果展示。"
+            "本界面以交互方式展示 GTE-base 句子编码模型的典型使用流程，"
+            "包括模型加载状态与句子相似度结果展示。"
         )
 
         with gr.Row():
@@ -46,9 +46,9 @@ def build_ui():
         load_btn.click(fn=fake_load_model, outputs=status_box)
 
         with gr.Tabs():
-            with gr.Tab("句子相侼度"):
+            with gr.Tab("句子相似度"):
                 gr.Markdown(
-                    "在下方输入源句子与多句候选（每行一句），模型将计算源句与各候选的语义相侼度。"
+                    "在下方输入源句子与多句候选（每行一句），模型将计算源句与各候选的语义相似度。"
                 )
                 source_inp = gr.Textbox(
                     label="源句子",
@@ -60,8 +60,8 @@ def build_ui():
                     placeholder="例如：\nThe model encodes text into vectors.\nText retrieval uses embedding similarity.\nToday is a sunny day.",
                     lines=6,
                 )
-                out = gr.Textbox(label="相侼度结果说明", lines=12, interactive=False)
-                run_btn = gr.Button("计算相侼度（演示）")
+                out = gr.Textbox(label="相似度结果说明", lines=12, interactive=False)
+                run_btn = gr.Button("计算相似度（演示）")
                 run_btn.click(
                     fn=fake_similarity,
                     inputs=[source_inp, candidates_inp],
